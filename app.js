@@ -273,7 +273,9 @@ function init(geojson) {
         ["in", q, ["downcase", ["to-string", ["get","polygon"]]]],
         ["in", q, ["downcase", ["to-string", ["get","zipcode"]]]],
         ["in", q, ["downcase", ["to-string", ["get","transferred"]]]],
-        ["in", q, ["downcase", ["to-string", ["get","num_package_per_day"]]]]
+        ["in", q, ["downcase", ["to-string", ["get","num_package_per_day"]]]],
+        ["in", q, ["downcase", ["to-string", ["get","AE_num_package_per_day"]]]],
+        ["in", q, ["downcase", ["to-string", ["get","AE_plan_per_day"]]]]
       ];
 
       map.setFilter("zip-fill", expr);
