@@ -287,7 +287,9 @@ function init(geojson) {
             p.dsp_name,
             p.polygon,
             p.zipcode,
-            p.transferred
+            p.transferred,
+            p.AE_num_package_per_day,
+            p.AE_plan_per_day
           ].map(v => String(v ?? "").toLowerCase());
 
           return values.some(v => v.includes(q));
