@@ -114,16 +114,21 @@ function init(geojson) {
     const dspMatch = ["match", ["get", "dsp_name"]];
     dsps.forEach(d => dspMatch.push(d, dsp2color[d]));
     dspMatch.push("#ccc");
+    const isTransferredExpr = [
+        "in",
+        ["upcase", ["to-string", ["get", "transferred"]]],
+        ["literal", ["SW", "YW"]]
+    ];
     const fillExpr = [
       "case",
-      ["==", ["to-string", ["get", "transferred"]], "是"],
+      isTransferredExpr,
       "#ff0000",   // transferred 专用高亮色
       dspMatch
     ];
     map.setPaintProperty("zip-fill", "fill-color", fillExpr);
     map.setPaintProperty("zip-fill", "fill-opacity", [
       "case",
-      ["==", ["to-string", ["get", "transferred"]], "是"],
+      isTransferredExpr,
       0.7,
       0.5
     ]);
@@ -207,26 +212,26 @@ function init(geojson) {
       tip.style.display = "block";
       tip.style.left = (e.point.x + 8) + "px";
       tip.style.top  = (e.point.y + 8) + "px";
-      const transferredText = (p.transferred || "").toString().trim() === "是" ? "是" : "否";
+      const transferredText = (p.transferred || "").toString().trim() || "否";
       const pkg = (p.num_package_per_day ?? "") === "" ? "0" : p.num_package_per_day; 
-      const aepkg = (p.AE_num_package_per_day ?? "") === "" ? "0" : p.AE_num_package_per_day;
-      const aeppkg = (p.AE_plan_per_day ?? "") === "" ? "0" : p.AE_plan_per_day; 
-      // tip.innerHTML = `
-      //   <b>ZIP:</b> ${p.zipcode || ""}<br>
-      //   <b>DSP:</b> ${p.dsp_name || ""}<br>
-      //   <b>Polygon:</b> ${p.polygon || ""}<br>
-      //   <b>Transferred:</b> ${transferredText}<br>
-      //   <b>num_package_per_day:</b> ${pkg}<br>
-      // `;
+      // const aepkg = (p.AE_num_package_per_day ?? "") === "" ? "0" : p.AE_num_package_per_day;
+      // const aeppkg = (p.AE_plan_per_day ?? "") === "" ? "0" : p.AE_plan_per_day; 
       tip.innerHTML = `
         <b>ZIP:</b> ${p.zipcode || ""}<br>
         <b>DSP:</b> ${p.dsp_name || ""}<br>
         <b>Polygon:</b> ${p.polygon || ""}<br>
         <b>Transferred:</b> ${transferredText}<br>
         <b>num_package_per_day:</b> ${pkg}<br>
-        <b>AE_num_package_per_day:</b> ${aepkg}<br>
-        <b>AE_plan_per_day:</b> ${aeppkg}
       `;
+      // tip.innerHTML = `
+      //   <b>ZIP:</b> ${p.zipcode || ""}<br>
+      //   <b>DSP:</b> ${p.dsp_name || ""}<br>
+      //   <b>Polygon:</b> ${p.polygon || ""}<br>
+      //   <b>Transferred:</b> ${transferredText}<br>
+      //   <b>num_package_per_day:</b> ${pkg}<br>
+      //   <b>AE_num_package_per_day:</b> ${aepkg}<br>
+      //   <b>AE_plan_per_day:</b> ${aeppkg}
+      // `;
         
       map.getCanvas().style.cursor = "pointer";
     });
@@ -245,8 +250,8 @@ function init(geojson) {
         map.setFilter("zip-fill", null);
         map.setFilter("zip-stroke", null);
         
-        if (map.getLayer("zip-transfer-outline")) map.setFilter("zip-transfer-outline", ["==", ["to-string", ["get", "transferred"]], "是"]);
-        if (map.getLayer("zip-transfer-symbol")) map.setFilter("zip-transfer-symbol", ["==", ["to-string", ["get", "transferred"]], "是"]);
+        if (map.getLayer("zip-transfer-outline")) map.setFilter("zip-transfer-outline", isTransferredExpr);
+        if (map.getLayer("zip-transfer-symbol")) map.setFilter("zip-transfer-symbol", isTransferredExpr);
         return;
       }
 
@@ -285,8 +290,8 @@ function init(geojson) {
         ["in", q, ["downcase", ["to-string", ["get","zipcode"]]]],
         ["in", q, ["downcase", ["to-string", ["get","transferred"]]]],
         ["in", q, ["downcase", ["to-string", ["get","num_package_per_day"]]]],
-        ["in", q, ["downcase", ["to-string", ["get","AE_num_package_per_day"]]]],
-        ["in", q, ["downcase", ["to-string", ["get","AE_plan_per_day"]]]]
+        // ["in", q, ["downcase", ["to-string", ["get","AE_num_package_per_day"]]]],
+        // ["in", q, ["downcase", ["to-string", ["get","AE_plan_per_day"]]]]
       ];
 
       map.setFilter("zip-fill", expr);
@@ -299,8 +304,8 @@ function init(geojson) {
             p.polygon,
             p.zipcode,
             p.transferred,
-            p.AE_num_package_per_day,
-            p.AE_plan_per_day
+            // p.AE_num_package_per_day,
+            // p.AE_plan_per_day
           ].map(v => String(v ?? "").toLowerCase());
 
           return values.some(v => v.includes(q));
@@ -309,10 +314,10 @@ function init(geojson) {
         zoomToFeatures(matchedFeatures);
         
       if (map.getLayer("zip-transfer-outline")) {
-        map.setFilter("zip-transfer-outline", ["all", expr, ["==", ["to-string", ["get", "transferred"]], "是"]]);
+        map.setFilter("zip-transfer-outline", ["all", expr, isTransferredExpr]);
       }
       if (map.getLayer("zip-transfer-symbol")) {
-        map.setFilter("zip-transfer-symbol", ["all", expr, ["==", ["to-string", ["get", "transferred"]], "是"]]);
+        map.setFilter("zip-transfer-symbol", ["all", expr, isTransferredExpr]);
       } 
     }
     box?.addEventListener("input", apply);
