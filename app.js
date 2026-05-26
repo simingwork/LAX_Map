@@ -214,24 +214,15 @@ function init(geojson) {
       tip.style.top  = (e.point.y + 8) + "px";
       const transferredText = (p.transferred || "").toString().trim() || "否";
       const pkg = (p.num_package_per_day ?? "") === "" ? "0" : p.num_package_per_day; 
-      // const aepkg = (p.AE_num_package_per_day ?? "") === "" ? "0" : p.AE_num_package_per_day;
-      // const aeppkg = (p.AE_plan_per_day ?? "") === "" ? "0" : p.AE_plan_per_day; 
+      const aepkg = (p.AE_num_package_per_day ?? "") === "" ? "0" : p.AE_num_package_per_day;
       tip.innerHTML = `
         <b>ZIP:</b> ${p.zipcode || ""}<br>
         <b>DSP:</b> ${p.dsp_name || ""}<br>
         <b>Polygon:</b> ${p.polygon || ""}<br>
         <b>Transferred:</b> ${transferredText}<br>
         <b>num_package_per_day:</b> ${pkg}<br>
+        <b>AE_num_package_per_day:</b> ${aepkg}<br>
       `;
-      // tip.innerHTML = `
-      //   <b>ZIP:</b> ${p.zipcode || ""}<br>
-      //   <b>DSP:</b> ${p.dsp_name || ""}<br>
-      //   <b>Polygon:</b> ${p.polygon || ""}<br>
-      //   <b>Transferred:</b> ${transferredText}<br>
-      //   <b>num_package_per_day:</b> ${pkg}<br>
-      //   <b>AE_num_package_per_day:</b> ${aepkg}<br>
-      //   <b>AE_plan_per_day:</b> ${aeppkg}
-      // `;
         
       map.getCanvas().style.cursor = "pointer";
     });
@@ -290,7 +281,7 @@ function init(geojson) {
         ["in", q, ["downcase", ["to-string", ["get","zipcode"]]]],
         ["in", q, ["downcase", ["to-string", ["get","transferred"]]]],
         ["in", q, ["downcase", ["to-string", ["get","num_package_per_day"]]]],
-        // ["in", q, ["downcase", ["to-string", ["get","AE_num_package_per_day"]]]],
+        ["in", q, ["downcase", ["to-string", ["get","AE_num_package_per_day"]]]],
         // ["in", q, ["downcase", ["to-string", ["get","AE_plan_per_day"]]]]
       ];
 
@@ -304,7 +295,7 @@ function init(geojson) {
             p.polygon,
             p.zipcode,
             p.transferred,
-            // p.AE_num_package_per_day,
+            p.AE_num_package_per_day,
             // p.AE_plan_per_day
           ].map(v => String(v ?? "").toLowerCase());
 
