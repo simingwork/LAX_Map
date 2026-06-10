@@ -213,6 +213,8 @@ function init(geojson) {
       tip.style.left = (e.point.x + 8) + "px";
       tip.style.top  = (e.point.y + 8) + "px";
       const transferredText = (p.transferred || "").toString().trim() || "否";
+      const swCover = (p.SW_coverage || "").toString().trim() || "否";
+      const ywCover = (p.YW_coverage || "").toString().trim() || "否";
       const pkg = (p.num_package_per_day ?? "") === "" ? "0" : p.num_package_per_day; 
       const aepkg = (p.AE_num_package_per_day ?? "") === "" ? "0" : p.AE_num_package_per_day;
       tip.innerHTML = `
@@ -220,6 +222,8 @@ function init(geojson) {
         <b>DSP:</b> ${p.dsp_name || ""}<br>
         <b>Polygon:</b> ${p.polygon || ""}<br>
         <b>Transferred:</b> ${transferredText}<br>
+        <b>SW_coverage:</b> ${swCover}<br>
+        <b>YW_coverage:</b> ${ywCover}<br>
         <b>num_package_per_day:</b> ${pkg}<br>
         <b>AE_num_package_per_day:</b> ${aepkg}<br>
       `;
@@ -280,9 +284,10 @@ function init(geojson) {
         ["in", q, ["downcase", ["to-string", ["get","polygon"]]]],
         ["in", q, ["downcase", ["to-string", ["get","zipcode"]]]],
         ["in", q, ["downcase", ["to-string", ["get","transferred"]]]],
+        ["in", q, ["downcase", ["to-string", ["get","SW_coverage"]]]],
+        ["in", q, ["downcase", ["to-string", ["get","YW_coverage"]]]],
         ["in", q, ["downcase", ["to-string", ["get","num_package_per_day"]]]],
         ["in", q, ["downcase", ["to-string", ["get","AE_num_package_per_day"]]]],
-        // ["in", q, ["downcase", ["to-string", ["get","AE_plan_per_day"]]]]
       ];
 
       map.setFilter("zip-fill", expr);
@@ -295,8 +300,9 @@ function init(geojson) {
             p.polygon,
             p.zipcode,
             p.transferred,
+            p.SW_coverage,
+            p.YW_coverage,
             p.AE_num_package_per_day,
-            // p.AE_plan_per_day
           ].map(v => String(v ?? "").toLowerCase());
 
           return values.some(v => v.includes(q));
