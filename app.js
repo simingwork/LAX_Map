@@ -63,7 +63,7 @@ function readGeoFile(file) {
 }
 
 // 先尝试直接 fetch 同目录文件；失败则等用户拖拽/选择
-fetch("west_dsp_polygon.geojson")
+fetch("最终.geojson")
   .then((r) => {
     if (!r.ok) throw new Error("fetch failed");
     return r.json();
